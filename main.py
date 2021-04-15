@@ -31,13 +31,36 @@ def display(items):
         print(f"{item+1}. {items[item]}")
 
 
+def reading_races():
+    with open("Races.txt") as file:
+        lines = file.readlines()
+        return [race.strip() for race in lines]
+
+
+def validation_for_choice(rac, prompt):
+    display(rac)
+    while True:
+        try:
+            cho = int(input(prompt))
+            if 0 <= cho <= len(rac):
+                break
+            else:
+                print("Choose one of the options please.")
+        except ValueError:
+            print("Numbers only please!")
+    return cho
+
+
 def main():
     print(MAIN_MENU)
     try:
         choice_main = int(input("==>"))
         while True:
+            races = reading_races()
             if choice_main == 1:
                 print("(1) Show the results for a race \n===============================")
+                display(races)
+                choice1 = validation_for_choice(races, "Choice ==> ")
             elif choice_main == 2:
                 print("(2) Add results for a race \n===============================")
             elif choice_main == 3:
