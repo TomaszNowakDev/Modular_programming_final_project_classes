@@ -8,6 +8,29 @@ MAIN_MENU = "Running Contest \n=========================== \n1. Show the results
             + "\n7. Quit"
 
 
+class Runner:
+    def __init__(self, n, c):
+        self.name = n
+        self.code = c
+
+    def __str__(self):
+        return f"{self.name} {self.code}"
+
+
+class Venue:
+    def __init__(self, code_run, times):
+        self.code_run = code_run
+        self.time = times
+
+    def __str__(self):
+        return f"{self.code_run} {self.time}"
+
+
+def display(items):
+    for item in range(len(items)):
+        print(f"{item+1}. {items[item]}")
+
+
 def main():
     print(MAIN_MENU)
     try:
