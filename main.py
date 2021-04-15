@@ -51,6 +51,29 @@ def validation_for_choice(rac, prompt):
     return cho
 
 
+with open("Runners.txt") as file_runners:
+    lines_runners = file_runners.readlines()
+    runners = []
+    for line in lines_runners:
+        split_line_runners = line.split(",")
+        name = split_line_runners[0]
+        id_runner = split_line_runners[1].strip()
+        runner = Runner(name, id_runner)
+        runners.append(runner)
+
+
+def reading_venues(races, choice1):
+    with open(f"{races[choice1 - 1]}.txt") as file_races:
+        lines_race_details = file_races.readlines()
+        races_details = []
+        for lin in lines_race_details:
+            split_line_race = lin.split(",")
+            code = split_line_race[0]
+            time = int(split_line_race[1])
+            race_det = Venue(code, time)
+            races_details.append(race_det)
+
+
 def main():
     print(MAIN_MENU)
     try:
@@ -61,6 +84,9 @@ def main():
                 print("(1) Show the results for a race \n===============================")
                 display(races)
                 choice1 = validation_for_choice(races, "Choice ==> ")
+                reading_venues(races, choice1)
+                print(f"Results for {races[choice1 - 1]}\n=======================")
+
             elif choice_main == 2:
                 print("(2) Add results for a race \n===============================")
             elif choice_main == 3:
