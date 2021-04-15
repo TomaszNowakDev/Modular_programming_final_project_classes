@@ -17,13 +17,19 @@ class Runner:
         return f"{self.name} {self.code}"
 
 
-class Venue:
+class ResultOfRace:
     def __init__(self, code_run, times):
         self.code_run = code_run
         self.time = times
 
     def __str__(self):
-        return f"{self.code_run} {self.time}"
+        return f"{self.code_run} {self.time_formatted()}"
+
+    def time_formatted(self):
+        minutes = self.time // 60
+        seconds = self.time % 60
+        tf = f"{minutes:>5} min {seconds:>2} sec"
+        return tf
 
 
 def display(items):
@@ -70,8 +76,9 @@ def reading_venues(races, choice1):
             split_line_race = lin.split(",")
             code = split_line_race[0]
             time = int(split_line_race[1])
-            race_det = Venue(code, time)
+            race_det = ResultOfRace(code, time)
             races_details.append(race_det)
+    return races_details
 
 
 def main():
@@ -82,11 +89,11 @@ def main():
             races = reading_races()
             if choice_main == 1:
                 print("(1) Show the results for a race \n===============================")
-                display(races)
                 choice1 = validation_for_choice(races, "Choice ==> ")
-                reading_venues(races, choice1)
+                race_details = reading_venues(races, choice1)
                 print(f"Results for {races[choice1 - 1]}\n=======================")
-
+                for racer in race_details:
+                    print(racer)
             elif choice_main == 2:
                 print("(2) Add results for a race \n===============================")
             elif choice_main == 3:
