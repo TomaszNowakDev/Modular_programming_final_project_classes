@@ -102,8 +102,8 @@ def main():
             print(f"Results for {races[choice1 - 1]}\n=======================")
             for racer in race_details:
                 print(racer)
-            years = [race_details[i].time for i in range(len(race_details))]
-            fastest = min(years)
+            race_times = [race_details[i].time for i in range(len(race_details))]
+            fastest = min(race_times)
             winner = [runner.code_run+" won the race." for runner in race_details if runner.time == fastest]
             print()
             display(winner)
@@ -147,6 +147,15 @@ def main():
                     print(f"\t{r.name:15}{r.code}")
         elif choice_main == 4:
             print("(4) Show the winner of each race \n===============================")
+            print(f"{'Venue':16}{'Winner'}\n======================")
+            for race in range(len(races)):
+                race_details = reading_venues(races, race)
+                times = [race_details[ti].time for ti in range(len(race_details))]
+                ids = [race_details[t].code_run for t in range(len(race_details))]
+                fastest = min(times)
+                for i in range(len(times)):
+                    if times[i] == fastest:
+                        print(f"{races[race]:15} {ids[i]}")
 
         elif choice_main == 5:
             print("(5) Show all the race times for one competitor \n===============================")
