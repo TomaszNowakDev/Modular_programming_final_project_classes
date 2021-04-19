@@ -137,8 +137,17 @@ def main():
 
         elif choice_main == 3:
             print("(3) Show all competitors by county \n===============================")
+            print("Cork runners \n---------------------")
+            for r in runners:
+                if r.code.startswith("CK"):
+                    print(f"\t{r.name:15}{r.code}")
+            print("Kerry runners \n---------------------")
+            for r in runners:
+                if r.code.startswith("KY"):
+                    print(f"\t{r.name:15}{r.code}")
         elif choice_main == 4:
             print("(4) Show the winner of each race \n===============================")
+
         elif choice_main == 5:
             print("(5) Show all the race times for one competitor \n===============================")
         elif choice_main == 6:
