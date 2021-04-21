@@ -2,7 +2,7 @@
 # 15 APR 2021
 
 # Setting MAIN MENU as a constant
-MAIN_MENU = "Running Contest \n=========================== \n1. Show the results for a race" \
+MAIN_MENU = "Running Club \n=========================== \n1. Show the results for a race" \
             + "\n2. Add results for a race \n3. Show all competitors by county \n4. Show the winner of each race" \
             + "\n5. Show all the race times for one competitor \n6. Show all competitors who have won a race" \
             + "\n7. Quit"
@@ -93,6 +93,8 @@ def main():
     while True:
         races = reading_races()
         runners = reading_runners()
+        runners_ids = [run.code for run in runners]
+        runners_names = [run.name for run in runners]
 
         if choice_main == 1:
             print("(1) Show the results for a race \n===============================")
@@ -159,6 +161,22 @@ def main():
 
         elif choice_main == 5:
             print("(5) Show all the race times for one competitor \n===============================")
+            display_numbered(runners)
+            which_runner = validation_for_choice(0, 5, "Which runner ==>")
+            runner_display = runners_ids[which_runner - 1]
+            print(f"{runners_names[which_runner - 1]:11}({runners_ids[which_runner - 1]})")
+            print("------------------------------")
+            for i in range(len(races)):
+                race_details = reading_venues(races, i + 1)
+                runners_in_race = [race_details[i].code_run for i in range(len(race_details))]
+                times_in_race = [race_details[i].time for i in range(len(race_details))]
+                if runner_display in runners_in_race:
+                    y = runners_in_race.index(runner_display)
+                    copied_times = times_in_race.copy()
+                    copied_times.sort()
+                    place = copied_times.index(times_in_race[y])
+                    print(f"{races[i]:12} {times_in_race[y]}  ({place + 1} of {len(times_in_race)})")
+
         elif choice_main == 6:
             print("(6) Show all competitors who have won a race \n===============================")
         elif choice_main == 7:
