@@ -42,6 +42,13 @@ def display(items):
         print(items[i])
 
 
+def time_display(t):
+    minutes = t // 60
+    seconds = t % 60
+    tf = f"{minutes:>5} min {seconds:>2} sec"
+    return tf
+
+
 def reading_races():
     with open("Races.txt") as file:
         lines = file.readlines()
@@ -175,10 +182,24 @@ def main():
                     copied_times = times_in_race.copy()
                     copied_times.sort()
                     place = copied_times.index(times_in_race[y])
-                    print(f"{races[i]:12} {times_in_race[y]}  ({place + 1} of {len(times_in_race)})")
+                    print(f"{races[i]:12} {time_display(times_in_race[y])}  ({place + 1} of {len(times_in_race)})")
 
         elif choice_main == 6:
             print("(6) Show all competitors who have won a race \n===============================")
+            print("The following runners have all won at least one race:")
+            print('-----------------------------------------------------')
+            winners_list = []
+            for i in range(len(races)):
+                race_details = reading_venues(races, i + 1)
+                runners_in_race = [race_details[i].code_run for i in range(len(race_details))]
+                times_in_race = [race_details[i].time for i in range(len(race_details))]
+                fastest = min(times_in_race)
+                for t in range(len(times_in_race)):
+                    if times_in_race[t] == fastest and runners_in_race[t] not in winners_list:
+                        winners_index = runners_ids.index(runners_in_race[t])
+                        print(f"\t{runners_names[winners_index]} ({runners_in_race[t]})")
+                        winners_list.append(f"{runners_in_race[t]}")
+
         elif choice_main == 7:
             print("Thank you, Goodbye.")
             break
