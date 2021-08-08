@@ -9,9 +9,9 @@ MAIN_MENU = "Running Club \n=========================== \n1. Show the results fo
 
 
 class Runner:
-    def __init__(self, n, c):
-        self.name = n
-        self.code = c
+    def __init__(self, name, code):
+        self.name = name
+        self.code = code
 
     def __str__(self):
         return f"{self.name} {self.code}"
@@ -42,11 +42,11 @@ def display(items):
         print(items[i])
 
 
-def time_display(t):
-    minutes = t // 60
-    seconds = t % 60
-    tf = f"{minutes:>5} min {seconds:>2} sec"
-    return tf
+def time_display(time):
+    minutes = time // 60
+    seconds = time % 60
+    time_formatted = f"{minutes:>5} min {seconds:>2} sec"
+    return time_formatted
 
 
 def reading_races():
@@ -58,14 +58,13 @@ def reading_races():
 def validation_for_choice(minimum, maximum, prompt):
     while True:
         try:
-            cho = int(input(prompt))
-            if minimum < cho <= maximum:
-                break
+            choice = int(input(prompt))
+            if minimum < choice <= maximum:
+                return choice
             else:
                 print("Choose one of the following options please.")
         except ValueError:
             print("Numbers only please!")
-    return cho
 
 
 def reading_runners():
@@ -81,8 +80,8 @@ def reading_runners():
     return runners
 
 
-def reading_venues(race, choice1):
-    with open(f"{race[choice1 - 1]}.txt") as file_races:
+def reading_venues(location):
+    with open(f"{location}.txt") as file_races:
         lines_race_details = file_races.readlines()
         races_details = []
         for lin in lines_race_details:
@@ -94,26 +93,32 @@ def reading_venues(race, choice1):
     return races_details
 
 
+def who_won(race_d):
+    times = [race_d[ti].time for ti in range(len(race_d))]
+    fastest = min(times)
+    winner = [runner.code_run for runner in race_d if runner.time == fastest]
+    return winner
+
+
 def main():
     print(MAIN_MENU)
     choice_main = validation_for_choice(0, 7, "==>")
-    while True:
-        races = reading_races()
-        runners = reading_runners()
-        runners_ids = [run.code for run in runners]
-        runners_names = [run.name for run in runners]
 
+    races = reading_races()
+    runners = reading_runners()
+    runners_ids = [run.code for run in runners]
+    runners_names = [run.name for run in runners]
+
+    while True:
         if choice_main == 1:
             print("(1) Show the results for a race \n===============================")
             display_numbered(races)
             choice1 = validation_for_choice(0, len(races), "Choice ==> ")
-            race_details = reading_venues(races, choice1)
+            race_details = reading_venues(races[choice1 - 1])
             print(f"Results for {races[choice1 - 1]}\n=======================")
             for racer in race_details:
                 print(racer)
-            race_times = [race_details[i].time for i in range(len(race_details))]
-            fastest = min(race_times)
-            winner = [runner.code_run+" won the race." for runner in race_details if runner.time == fastest]
+            winner = who_won(race_details)
             print()
             display(winner)
         elif choice_main == 2:
@@ -123,26 +128,27 @@ def main():
                 if new_race not in races:
                     with open("Races.txt", "a") as file_option2:
                         print(new_race, file=file_option2)
+                        races.append(new_race)
+                    break
                 else:
                     print(f"Data for {new_race} already exists, please enter a different name.")
                     new_race = input("Name of new race location ==> ").capitalize()
-                with open(new_race.lower() + ".txt", "w") as file_race:
-                    for racer1 in runners:
-                        while True:
-                            try:
-                                time_from_race = int(input(f"What time {racer1.code} got in {new_race} race? ==>"))
-                                if time_from_race > 0:
-                                    print(f"{racer1.code},{time_from_race}", file=file_race)
-                                    break
-                                elif time_from_race == 0:
-                                    print(f"{racer1.code} did not participate or did not finish the {new_race} race.")
-                                    break
-                                else:
-                                    print("Positive numbers only, or number zero if the runner did not participate or"
-                                          + " did not finish the race.")
-                            except ValueError:
-                                print("Numbers only please!")
-                    break
+            with open(new_race.lower() + ".txt", "w") as file_race:
+                for racer1 in runners:
+                    while True:
+                        try:
+                            time_from_race = int(input(f"What time {racer1.code} got in {new_race} race? ==>"))
+                            if time_from_race > 0:
+                                print(f"{racer1.code},{time_from_race}", file=file_race)
+                                break
+                            elif time_from_race == 0:
+                                print(f"{racer1.code} did not participate or did not finish the {new_race} race.")
+                                break
+                            else:
+                                print("Positive numbers only, or number zero if the runner did not participate or"
+                                      + " did not finish the race.")
+                        except ValueError:
+                            print("Numbers only please!")
 
         elif choice_main == 3:
             print("(3) Show all competitors by county \n===============================")
@@ -158,13 +164,13 @@ def main():
             print("(4) Show the winner of each race \n===============================")
             print(f"{'Venue':16}{'Winner'}\n======================")
             for race in range(len(races)):
-                race_details = reading_venues(races, race)
-                times = [race_details[ti].time for ti in range(len(race_details))]
-                ids = [race_details[t].code_run for t in range(len(race_details))]
-                fastest = min(times)
-                for i in range(len(times)):
-                    if times[i] == fastest:
-                        print(f"{races[race]:15} {ids[i]}")
+                race_details = reading_venues(races[race])
+                winner = who_won(race_details)
+                print(f"{races[race]:15} ", end='')
+                for i in range(len(winner)):
+
+                    print(f" {winner[i]}", end="")
+                print()
 
         elif choice_main == 5:
             print("(5) Show all the race times for one competitor \n===============================")
@@ -174,7 +180,7 @@ def main():
             print(f"{runners_names[which_runner - 1]:11}({runners_ids[which_runner - 1]})")
             print("------------------------------")
             for i in range(len(races)):
-                race_details = reading_venues(races, i + 1)
+                race_details = reading_venues(races[i])
                 runners_in_race = [race_details[i].code_run for i in range(len(race_details))]
                 times_in_race = [race_details[i].time for i in range(len(race_details))]
                 if runner_display in runners_in_race:
@@ -190,15 +196,14 @@ def main():
             print('-----------------------------------------------------')
             winners_list = []
             for i in range(len(races)):
-                race_details = reading_venues(races, i + 1)
-                runners_in_race = [race_details[i].code_run for i in range(len(race_details))]
-                times_in_race = [race_details[i].time for i in range(len(race_details))]
-                fastest = min(times_in_race)
-                for t in range(len(times_in_race)):
-                    if times_in_race[t] == fastest and runners_in_race[t] not in winners_list:
-                        winners_index = runners_ids.index(runners_in_race[t])
-                        print(f"\t{runners_names[winners_index]} ({runners_in_race[t]})")
-                        winners_list.append(f"{runners_in_race[t]}")
+                race_details = reading_venues(races[i])
+                winner = who_won(race_details)
+
+                for t in range(len(winner)):
+                    if winner[t] not in winners_list:
+                        winners_index = runners_ids.index(winner[t])
+                        print(f"\t{runners_names[winners_index]} ({winner[t]})")
+                        winners_list.append(f"{winner[t]}")
 
         elif choice_main == 7:
             print("Thank you, Goodbye.")

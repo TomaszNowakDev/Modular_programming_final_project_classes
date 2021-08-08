@@ -1,4 +1,6 @@
 Currabinny
 Glengarriff
-Bandon
 Bishopstown
+Midelton
+Bandon
+Cork
